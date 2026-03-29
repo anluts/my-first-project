@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тарифы</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #111;
+      color: #e8e8e8;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    header h1 span {
+      color: #ff6a00;
+    }
+
+    header p {
+      color: #999;
+      font-size: 1.05rem;
+    }
+
+    .plans {
+      display: flex;
+      gap: 24px;
+      align-items: stretch;
+      justify-content: center;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 36px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card.featured {
+      background: #1e1a15;
+      border-color: #ff6a00;
+      transform: scale(1.04);
+      position: relative;
+    }
+
+    .card.featured:hover {
+      transform: scale(1.04) translateY(-4px);
+    }
+
+    .badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff6a00;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .plan-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 8px;
+    }
+
+    .featured .plan-name {
+      color: #ff6a00;
+    }
+
+    .price {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .price sup {
+      font-size: 1.2rem;
+      font-weight: 600;
+      vertical-align: super;
+    }
+
+    .price-note {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 28px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #2a2a2a;
+      margin-bottom: 24px;
+    }
+
+    .featured .divider {
+      background: #3a2a1a;
+    }
+
+    .features {
+      list-style: none;
+      flex: 1;
+      margin-bottom: 32px;
+    }
+
+    .features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 12px;
+    }
+
+    .features li .icon {
+      color: #ff6a00;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .features li.muted {
+      color: #555;
+    }
+
+    .features li.muted .icon {
+      color: #444;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s, background 0.15s;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #333;
+      color: #ccc;
+    }
+
+    .btn-outline:hover {
+      border-color: #ff6a00;
+      color: #ff6a00;
+    }
+
+    .btn-primary {
+      background: #ff6a00;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.88;
+    }
+
+    footer {
+      margin-top: 56px;
+      color: #555;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    footer a {
+      color: #ff6a00;
+      text-decoration: none;
+    }
+
+    @media (max-width: 720px) {
+      .plans {
+        flex-direction: column;
+        max-width: 400px;
+      }
+
+      .card.featured {
+        transform: none;
+        order: -1;
+      }
+
+      .card.featured:hover {
+        transform: translateY(-4px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Простые и <span>честные</span> тарифы</h1>
+    <p>Начни бесплатно, переходи когда будет нужно</p>
+  </header>
+
+  <div class="plans">
+
+    <!-- Старт -->
+    <div class="card">
+      <div class="plan-name">Старт</div>
+      <div class="price">0 ₽</div>
+      <div class="price-note">навсегда бесплатно</div>
+      <div class="divider"></div>
+      <ul class="features">
+        <li><span class="icon">✓</span> До 3 проектов</li>
+        <li><span class="icon">✓</span> Базовая аналитика</li>
+        <li><span class="icon">✓</span> 1 пользователь</li>
+        <li><span class="icon">✓</span> Поддержка по почте</li>
+        <li class="muted"><span class="icon">✗</span> Приоритетная поддержка</li>
+        <li class="muted"><span class="icon">✗</span> Командная работа</li>
+        <li class="muted"><span class="icon">✗</span> API-доступ</li>
+      </ul>
+      <button class="btn btn-outline">Начать бесплатно</button>
+    </div>
+
+    <!-- Про -->
+    <div class="card featured">
+      <div class="badge">Популярный</div>
+      <div class="plan-name">Про</div>
+      <div class="price"><sup>₽</sup>990</div>
+      <div class="price-note">в месяц, отмена в любой момент</div>
+      <div class="divider"></div>
+      <ul class="features">
+        <li><span class="icon">✓</span> Неограниченные проекты</li>
+        <li><span class="icon">✓</span> Расширенная аналитика</li>
+        <li><span class="icon">✓</span> До 5 пользователей</li>
+        <li><span class="icon">✓</span> Приоритетная поддержка</li>
+        <li><span class="icon">✓</span> Экспорт данных</li>
+        <li><span class="icon">✓</span> Интеграции</li>
+        <li class="muted"><span class="icon">✗</span> API-доступ</li>
+      </ul>
+      <button class="btn btn-primary">Выбрать Про</button>
+    </div>
+
+    <!-- Бизнес -->
+    <div class="card">
+      <div class="plan-name">Бизнес</div>
+      <div class="price"><sup>₽</sup>3 900</div>
+      <div class="price-note">в месяц за команду</div>
+      <div class="divider"></div>
+      <ul class="features">
+        <li><span class="icon">✓</span> Всё из тарифа Про</li>
+        <li><span class="icon">✓</span> Неограниченные пользователи</li>
+        <li><span class="icon">✓</span> API-доступ</li>
+        <li><span class="icon">✓</span> Выделенный менеджер</li>
+        <li><span class="icon">✓</span> SLA и гарантии</li>
+        <li><span class="icon">✓</span> Кастомные интеграции</li>
+        <li><span class="icon">✓</span> Обучение команды</li>
+      </ul>
+      <button class="btn btn-outline">Связаться с нами</button>
+    </div>
+
+  </div>
+
+  <footer>
+    Есть вопросы? <a href="mailto:hello@example.com">Напишите нам</a>
+  </footer>
+
+</body>
+</html>
