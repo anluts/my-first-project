@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Трекер привычек</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0d0d1a;
+      color: #e0e0ff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #00f5ff, #bf00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #6666aa;
+      letter-spacing: 1px;
+    }
+
+    .week-range {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #00f5ff;
+      letter-spacing: 0.5px;
+      background: rgba(0, 245, 255, 0.07);
+      border: 1px solid rgba(0, 245, 255, 0.15);
+      border-radius: 20px;
+      padding: 3px 14px;
+    }
+
+    .tracker-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+
+    thead th {
+      padding: 10px 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #00f5ff;
+      border-bottom: 1px solid #1e1e40;
+    }
+
+    thead th:first-child {
+      text-align: left;
+      padding-left: 12px;
+      min-width: 140px;
+      color: #6666aa;
+    }
+
+    thead th:not(:first-child) {
+      text-align: center;
+      width: 11%;
+    }
+
+    thead th.today-col {
+      color: #bf00ff;
+      position: relative;
+    }
+
+    thead th.today-col::after {
+      content: '●';
+      display: block;
+      font-size: 6px;
+      color: #bf00ff;
+      margin-top: 2px;
+    }
+
+    thead th.future-col {
+      color: #2e2e55;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #13132a;
+      transition: background 0.2s;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 245, 255, 0.03);
+    }
+
+    tbody td {
+      padding: 10px 6px;
+    }
+
+    tbody td:first-child {
+      padding-left: 12px;
+    }
+
+    .habit-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .habit-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .cell {
+      text-align: center;
+    }
+
+    /* Checkbox cell */
+    .check-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 2px solid #2a2a4a;
+      background: #0d0d1a;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .check-btn:hover {
+      border-color: #00f5ff55;
+      box-shadow: 0 0 8px #00f5ff33;
+    }
+
+    .check-btn.checked {
+      border-color: #00f5ff;
+      background: #001a1f;
+      box-shadow: 0 0 10px #00f5ff66;
+    }
+
+    /* Future days */
+    .check-btn.future-cell {
+      border-color: #1a1a30;
+      background: #0a0a16;
+      cursor: default;
+      opacity: 0.4;
+    }
+
+    .check-btn.future-cell:hover {
+      border-color: #1a1a30;
+      box-shadow: none;
+    }
+
+    .check-btn.today-cell {
+      border-color: #3a1a5a;
+    }
+
+    .check-btn.today-cell:hover {
+      border-color: #bf00ff55;
+      box-shadow: 0 0 8px #bf00ff33;
+    }
+
+    .check-btn.today-cell.checked {
+      border-color: #bf00ff;
+      background: #130020;
+      box-shadow: 0 0 10px #bf00ff66;
+    }
+
+    /* Checkmark SVG */
+    .check-btn svg {
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+      transform: scale(0.4) rotate(-20deg);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .check-btn.checked svg {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      background: rgba(0, 245, 255, 0.25);
+      transform: scale(0);
+      animation: ripple-anim 0.45s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .today-cell .ripple {
+      background: rgba(191, 0, 255, 0.25);
+    }
+
+    @keyframes ripple-anim {
+      to { transform: scale(1); opacity: 0; }
+    }
+
+    /* Day complete burst */
+    .day-complete-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #0d0d1a;
+      background: linear-gradient(90deg, #00f5ff, #bf00ff);
+      border-radius: 20px;
+      padding: 2px 7px;
+      opacity: 0;
+      transform: scale(0.6) translateY(4px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+
+    .day-complete-badge.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    @keyframes burst-glow {
+      0%   { box-shadow: 0 0 0px #00f5ff00; }
+      40%  { box-shadow: 0 0 22px #00f5ffcc, 0 0 40px #bf00ff66; }
+      100% { box-shadow: 0 0 10px #00f5ff55; }
+    }
+
+    .bar-track.complete .bar-fill {
+      animation: burst-glow 0.7s ease-out forwards;
+    }
+
+    @keyframes shake-celebrate {
+      0%  { transform: translateY(0); }
+      20% { transform: translateY(-3px); }
+      40% { transform: translateY(1px); }
+      60% { transform: translateY(-2px); }
+      80% { transform: translateY(1px); }
+      100%{ transform: translateY(0); }
+    }
+
+    .day-progress.celebrating .day-name {
+      animation: shake-celebrate 0.5s ease-out;
+    }
+
+    /* Progress section */
+    .progress-section {
+      max-width: 900px;
+      margin: 32px auto 0;
+    }
+
+    .progress-section h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #6666aa;
+      margin-bottom: 16px;
+    }
+
+    .days-progress {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .day-progress .day-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #4444aa;
+    }
+
+    .day-progress.today-day .day-name {
+      color: #bf00ff;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 6px;
+      background: #1a1a35;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #00f5ff, #0080ff);
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .day-progress.today-day .bar-fill {
+      background: linear-gradient(90deg, #bf00ff, #ff0080);
+    }
+
+    .pct-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #00f5ff;
+      min-width: 30px;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .pct-label .fraction {
+      display: block;
+      font-size: 0.62rem;
+      font-weight: 400;
+      opacity: 0.55;
+      letter-spacing: 0;
+    }
+
+    .day-progress.today-day .pct-label {
+      color: #bf00ff;
+    }
+
+    .day-progress.future-day .day-name {
+      color: #222244;
+    }
+
+    .day-progress.future-day .bar-track {
+      background: #111128;
+    }
+
+    .day-progress.future-day .pct-label {
+      color: #222244;
+    }
+
+    /* Total summary */
+    .total-bar-wrap {
+      max-width: 900px;
+      margin: 28px auto 0;
+      background: #0f0f23;
+      border: 1px solid #1e1e40;
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+
+    .total-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .total-bar-header span:first-child {
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #6666aa;
+    }
+
+    .total-pct {
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #00f5ff, #bf00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: right;
+      line-height: 1.2;
+    }
+
+    .total-fraction {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: #4444aa;
+      background: none;
+      -webkit-text-fill-color: #4444aa;
+    }
+
+    .total-track {
+      height: 10px;
+      background: #1a1a35;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .total-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #00f5ff, #bf00ff);
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px #00f5ff55;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .habit-label span:not(.habit-icon) {
+        display: none;
+      }
+      thead th:first-child {
+        min-width: 48px;
+      }
+      .check-btn {
+        width: 30px;
+        height: 30px;
+      }
+      .check-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Трекер привычек</h1>
+    <p>5 привычек на неделю</p>
+    <div class="week-range" id="week-range"></div>
+  </header>
+
+  <div class="tracker-wrapper">
+    <table id="habits-table">
+      <thead>
+        <tr id="header-row">
+          <th>Привычка</th>
+          <!-- days filled by JS -->
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="progress-section">
+    <h2>Прогресс по дням</h2>
+    <div class="days-progress" id="days-progress"></div>
+  </div>
+
+  <div class="total-bar-wrap">
+    <div class="total-bar-header">
+      <span>Общий прогресс за неделю</span>
+      <span class="total-pct" id="total-pct">0%</span>
+    </div>
+    <div class="total-track">
+      <div class="total-fill" id="total-fill"></div>
+    </div>
+  </div>
+
+  <script>
+    const HABITS = [
+      { id: 'water',   icon: '💧', name: 'Вода' },
+      { id: 'workout', icon: '🏋️', name: 'Зарядка' },
+      { id: 'reading', icon: '📚', name: 'Чтение' },
+      { id: 'sleep',   icon: '🌙', name: 'Сон до 23:00' },
+      { id: 'sugar',   icon: '🚫', name: 'Без сахара' },
+    ];
+
+    const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    const TOTAL_CELLS = HABITS.length * 7;
+
+    // Determine today's column (0=Mon … 6=Sun), week anchor = Monday
+    const today = new Date();
+    const jsDay = today.getDay(); // 0=Sun
+    const todayColIndex = jsDay === 0 ? 6 : jsDay - 1;
+
+    // Generate week dates (Mon to Sun)
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - todayColIndex + i);
+      weekDates.push(d);
+    }
+
+    // Local date string — avoids UTC shift (toISOString() would give wrong date in UTC+X)
+    function localDateStr(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    // Load state
+    function getStorageKey() {
+      return `habits_${localDateStr(weekDates[0])}`;
+    }
+
+    function loadState() {
+      try {
+        return JSON.parse(localStorage.getItem(getStorageKey())) || {};
+      } catch { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(getStorageKey(), JSON.stringify(state)); } catch {}
+    }
+
+    let state = loadState();
+
+    function cellKey(habitId, dayIndex) {
+      return `${habitId}_${dayIndex}`;
+    }
+
+    const MONTHS_RU = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    const MONTHS_FULL = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+    // Week range label in header
+    const mon = weekDates[0], sun = weekDates[6];
+    const sameMonth = mon.getMonth() === sun.getMonth();
+    const rangeText = sameMonth
+      ? `${mon.getDate()} – ${sun.getDate()} ${MONTHS_FULL[sun.getMonth()]} ${sun.getFullYear()}`
+      : `${mon.getDate()} ${MONTHS_FULL[mon.getMonth()]} – ${sun.getDate()} ${MONTHS_FULL[sun.getMonth()]} ${sun.getFullYear()}`;
+    document.getElementById('week-range').textContent = rangeText;
+
+    // Build header
+    const headerRow = document.getElementById('header-row');
+    weekDates.forEach((d, i) => {
+      const th = document.createElement('th');
+      // Show month label when it's the first day or month changes from previous day
+      const showMonth = i === 0 || d.getMonth() !== weekDates[i - 1].getMonth();
+      const monthLabel = showMonth
+        ? `<span style="font-size:0.7em;font-weight:400;letter-spacing:0;opacity:0.7">${MONTHS_RU[d.getMonth()]}</span><br>`
+        : '';
+      th.innerHTML = `${monthLabel}${DAYS_SHORT[i]}<br><span style="font-size:0.9em;font-weight:400;letter-spacing:0">${d.getDate()}</span>`;
+      if (i === todayColIndex) th.classList.add('today-col');
+      else if (i > todayColIndex) th.classList.add('future-col');
+      headerRow.appendChild(th);
+    });
+
+    // Build rows
+    const tbody = document.getElementById('table-body');
+    HABITS.forEach(habit => {
+      const tr = document.createElement('tr');
+
+      // Label cell
+      const tdLabel = document.createElement('td');
+      tdLabel.innerHTML = `<div class="habit-label"><span class="habit-icon">${habit.icon}</span><span>${habit.name}</span></div>`;
+      tr.appendChild(tdLabel);
+
+      // Day cells
+      for (let d = 0; d < 7; d++) {
+        const td = document.createElement('td');
+        td.className = 'cell';
+
+        const isFuture = d > todayColIndex;
+        const isToday  = d === todayColIndex;
+
+        const btn = document.createElement('div');
+        btn.className = 'check-btn' + (isToday ? ' today-cell' : '') + (isFuture ? ' future-cell' : '');
+        btn.dataset.habit = habit.id;
+        btn.dataset.day = d;
+
+        const key = cellKey(habit.id, d);
+        if (state[key]) btn.classList.add('checked');
+
+        const strokeColor = isToday ? '#bf00ff' : '#00f5ff';
+        btn.innerHTML = `
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="4,10 8.5,15 16,6"
+              stroke="${strokeColor}"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+
+        if (!isFuture) {
+          btn.addEventListener('click', function(e) {
+            const key = cellKey(this.dataset.habit, this.dataset.day);
+            const isChecked = this.classList.toggle('checked');
+            state[key] = isChecked;
+            saveState(state);
+            spawnRipple(this, e);
+            updateProgress();
+          });
+        }
+
+        td.appendChild(btn);
+        tr.appendChild(td);
+      }
+
+      tbody.appendChild(tr);
+    });
+
+    // Ripple effect
+    function spawnRipple(btn, e) {
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const rect = btn.getBoundingClientRect();
+      r.style.left = ((e.clientX - rect.left) - 30) + 'px';
+      r.style.top  = ((e.clientY - rect.top)  - 30) + 'px';
+      btn.appendChild(r);
+      r.addEventListener('animationend', () => r.remove());
+    }
+
+    // Build day progress bars
+    const daysProgressEl = document.getElementById('days-progress');
+    const barFills = [];
+    const barTracks = [];
+    const pctLabels = [];
+    const dayDivs = [];
+    const badges = [];
+
+    weekDates.forEach((d, i) => {
+      const div = document.createElement('div');
+      div.className = 'day-progress'
+        + (i === todayColIndex ? ' today-day' : '')
+        + (i > todayColIndex ? ' future-day' : '');
+      dayDivs.push(div);
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'day-name';
+      nameEl.textContent = DAYS_SHORT[i];
+
+      const badge = document.createElement('div');
+      badge.className = 'day-complete-badge';
+      badge.textContent = '100%';
+      badges.push(badge);
+
+      const track = document.createElement('div');
+      track.className = 'bar-track';
+      const fill = document.createElement('div');
+      fill.className = 'bar-fill';
+      track.appendChild(fill);
+      barFills.push(fill);
+      barTracks.push(track);
+
+      const pct = document.createElement('div');
+      pct.className = 'pct-label';
+      pct.innerHTML = '0%<span class="fraction">0/5</span>';
+      pctLabels.push(pct);
+
+      div.appendChild(nameEl);
+      div.appendChild(badge);
+      div.appendChild(track);
+      div.appendChild(pct);
+      daysProgressEl.appendChild(div);
+    });
+
+    // Pre-fill so initial render doesn't trigger celebration animation
+    const prevDayComplete = Array.from({ length: 7 }, (_, d) => {
+      if (d > todayColIndex) return false;
+      return HABITS.every(h => state[cellKey(h.id, d)]);
+    });
+
+    function updateProgress() {
+      let totalChecked = 0;
+      const activeDays = todayColIndex + 1;
+
+      for (let d = 0; d < 7; d++) {
+        let dayChecked = 0;
+        HABITS.forEach(h => {
+          if (state[cellKey(h.id, d)]) dayChecked++;
+        });
+
+        const isComplete = dayChecked === HABITS.length;
+
+        if (d > todayColIndex) {
+          barFills[d].style.width = '0%';
+          pctLabels[d].innerHTML = '—';
+          barTracks[d].classList.remove('complete');
+          badges[d].classList.remove('visible');
+        } else {
+          const pct = Math.round((dayChecked / HABITS.length) * 100);
+          barFills[d].style.width = pct + '%';
+          pctLabels[d].innerHTML = `${pct}%<span class="fraction">${dayChecked}/${HABITS.length}</span>`;
+          totalChecked += dayChecked;
+
+          // Day complete: badge + glow
+          if (isComplete) {
+            barTracks[d].classList.add('complete');
+            badges[d].classList.add('visible');
+            // Celebrate only on the transition to complete
+            if (!prevDayComplete[d]) {
+              dayDivs[d].classList.remove('celebrating');
+              void dayDivs[d].offsetWidth; // reflow to restart animation
+              dayDivs[d].classList.add('celebrating');
+            }
+          } else {
+            barTracks[d].classList.remove('complete');
+            badges[d].classList.remove('visible');
+            dayDivs[d].classList.remove('celebrating');
+          }
+          prevDayComplete[d] = isComplete;
+        }
+      }
+
+      const totalPossible = activeDays * HABITS.length;
+      const totalPct = Math.round((totalChecked / totalPossible) * 100);
+      document.getElementById('total-fill').style.width = totalPct + '%';
+      document.getElementById('total-pct').innerHTML =
+        `${totalPct}%<span class="total-fraction">${totalChecked}/${totalPossible}</span>`;
+    }
+
+    updateProgress();
+  </script>
+</body>
+</html>
