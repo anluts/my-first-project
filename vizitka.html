@@ -203,118 +203,73 @@
     .skill-tag.cyan   { border-color: rgba(6,182,212,0.4);  color: #67e8f9; background: rgba(6,182,212,0.1); }
     .skill-tag.amber  { border-color: rgba(245,158,11,0.4); color: #fcd34d; background: rgba(245,158,11,0.1); }
 
-    /* ── Social icons ── */
+    /* ── Social buttons ── */
     .socials {
       display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 36px;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 0;
     }
     .social-btn {
       position: relative;
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      display: flex;
+      display: grid;
+      grid-template-columns: 28px 1fr;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--muted);
-      transition: color 0.25s, border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
-      overflow: hidden;
-    }
-    .social-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-    .social-btn:hover {
-      transform: translateY(-4px) scale(1.08);
-    }
-    .social-btn.telegram:hover { color: #2aabee; border-color: rgba(42,171,238,0.5); box-shadow: 0 8px 24px rgba(42,171,238,0.2); background: rgba(42,171,238,0.08); }
-    .social-btn.max:hover      { color: #ff4d6d; border-color: rgba(255,77,109,0.5); box-shadow: 0 8px 24px rgba(255,77,109,0.2); background: rgba(255,77,109,0.08); }
-
-    .social-btn svg { width: 22px; height: 22px; flex-shrink: 0; position: relative; z-index: 1; }
-
-    /* Tooltip */
-    .social-btn .tip {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      padding: 4px 10px;
-      border-radius: 8px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .social-btn:hover .tip { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* ── CTA button ── */
-    .cta {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      gap: 0;
       width: 100%;
-      padding: 16px 28px;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: #fff;
-      text-decoration: none;
-      border: none;
+      padding: 15px 22px;
       border-radius: 16px;
       cursor: pointer;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      transition: transform 0.22s, box-shadow 0.22s, filter 0.22s;
       overflow: hidden;
-      background: linear-gradient(135deg, var(--accent1) 0%, #5b21b6 50%, var(--accent2) 100%);
-      background-size: 200% 200%;
-      animation: gradMove 4s ease infinite;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 24px rgba(124,58,237,0.35);
     }
-    @keyframes gradMove {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .cta::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0);
-      transition: background 0.2s;
-    }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(124,58,237,0.5); }
-    .cta:hover::after { background: rgba(255,255,255,0.06); }
-    .cta:active { transform: translateY(0); }
-    .cta-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .social-btn:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.12); }
+    .social-btn:active { transform: translateY(0) scale(0.98); }
 
-    /* Ripple */
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      transform: scale(0);
-      animation: rippleAnim 0.6s linear;
-      pointer-events: none;
+    /* Icon column */
+    .social-btn svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      display: block;
     }
-    @keyframes rippleAnim {
-      to { transform: scale(4); opacity: 0; }
+
+    /* Label column — perfectly centred between icon and right edge */
+    .social-btn .btn-label {
+      text-align: center;
+      margin-left: -28px; /* pull back to account for icon col so text centres over full width */
     }
+
+    /* Telegram */
+    .social-btn.telegram {
+      background: linear-gradient(135deg, #1a96d4 0%, #2aabee 60%, #54c5f8 100%);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(42,171,238,0.35);
+    }
+    .social-btn.telegram:hover { box-shadow: 0 8px 32px rgba(42,171,238,0.55); }
+
+    /* MAX (VK) */
+    .social-btn.max {
+      background: linear-gradient(135deg, #0060d4 0%, #0077ff 55%, #2196f3 100%);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0,119,255,0.35);
+    }
+    .social-btn.max:hover { box-shadow: 0 8px 32px rgba(0,119,255,0.55); }
+
+    /* Instagram */
+    .social-btn.instagram {
+      background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(220,39,67,0.35);
+    }
+    .social-btn.instagram:hover { box-shadow: 0 8px 32px rgba(220,39,67,0.55); }
 
     /* ── Footer note ── */
     .card-footer {
@@ -365,58 +320,41 @@
       <span class="skill-tag cyan">AI-инструменты</span>
     </div>
 
-    <!-- Social icons -->
+    <!-- Social buttons -->
     <div class="socials">
 
       <!-- Telegram -->
-      <a href="https://t.me/ANLutsen" target="_blank" rel="noopener" class="social-btn telegram" title="Telegram">
-        <span class="tip">@ANLutsen</span>
+      <a href="https://t.me/ANLutsen" target="_blank" rel="noopener" class="social-btn telegram">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M11.944 0A12 12 0 1 0 24 12 12 12 0 0 0 11.944 0Zm5.954 8.168-2.006 9.45c-.15.656-.537.816-1.084.507l-3-2.21-1.447 1.394c-.16.16-.294.294-.603.294l.213-3.053 5.56-5.023c.242-.213-.054-.332-.373-.119L7.26 14.39l-2.96-.924c-.643-.203-.657-.643.136-.953l11.57-4.464c.536-.193 1.006.13.852.12Z"/>
         </svg>
+        <span class="btn-label">Telegram</span>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/verybest969/" target="_blank" rel="noopener" class="social-btn instagram">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        <span class="btn-label">Instagram</span>
       </a>
 
       <!-- MAX -->
-      <a href="https://max.ru/u/f9LHodD0cOJmpBwpitMXY5wUZ0Z66j6awCoYFDPdCfd9U1r0KWD5wB6ojHU" target="_blank" rel="noopener" class="social-btn max" title="MAX">
-        <span class="tip">MAX</span>
+      <a href="https://max.ru/u/f9LHodD0cOJmpBwpitMXY5wUZ0Z66j6awCoYFDPdCfd9U1r0KWD5wB6ojHU" target="_blank" rel="noopener" class="social-btn max">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           <path d="m9 10 1.5 1.5L13 9l2.5 3.5" stroke-linecap="round"/>
         </svg>
+        <span class="btn-label">MAX</span>
       </a>
 
     </div>
-
-    <!-- CTA -->
-    <a href="https://t.me/ANLutsen" target="_blank" rel="noopener" class="cta" id="ctaBtn">
-      <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M11.944 0A12 12 0 1 0 24 12 12 12 0 0 0 11.944 0Zm5.954 8.168-2.006 9.45c-.15.656-.537.816-1.084.507l-3-2.21-1.447 1.394c-.16.16-.294.294-.603.294l.213-3.053 5.56-5.023c.242-.213-.054-.332-.373-.119L7.26 14.39l-2.96-.924c-.643-.203-.657-.643.136-.953l11.57-4.464c.536-.193 1.006.13.852.12Z"/>
-      </svg>
-      Написать мне
-    </a>
 
     <p class="card-footer">© 2026 · Александр Луценко</p>
 
   </div>
 
   <script>
-    // Ripple effect on CTA
-    document.getElementById('ctaBtn').addEventListener('click', function(e) {
-      const btn = this;
-      const circle = document.createElement('span');
-      const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-      const radius = diameter / 2;
-      const rect = btn.getBoundingClientRect();
-      circle.style.cssText = `
-        width: ${diameter}px; height: ${diameter}px;
-        left: ${e.clientX - rect.left - radius}px;
-        top: ${e.clientY - rect.top - radius}px;
-      `;
-      circle.classList.add('ripple');
-      btn.querySelector('.ripple')?.remove();
-      btn.appendChild(circle);
-    });
-
     // Parallax on mouse move
     const card = document.querySelector('.card');
     document.addEventListener('mousemove', (e) => {
